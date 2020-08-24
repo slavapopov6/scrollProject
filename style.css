@@ -28,11 +28,17 @@ h1 {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 /* image container */
 .image-container {
   margin: 10px 25%;
 }
+
 .image-container img {
+  width: 100%;
+  margin-top: 5px;
+}
+#result {
   width: 100%;
   margin-top: 5px;
 }
@@ -44,7 +50,21 @@ h1 {
   .image-container {
     margin: 10px;
   }
-}
-.container {
-  width: 20rem;
+  #result img {
+    margin: 10px;
+  }
+  .form-control {
+    margin-left: 30%;
+    width: 8rem;
+  }
+  .btn {
+    margin-left: 30%;
+    width: 8rem;
+  }
+  #result img {
+    margin-left: 0px;
+    display: flex;
+    width: 100%;
+    margin-top: 5px;
+  }
 }

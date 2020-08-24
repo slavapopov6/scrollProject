@@ -48,6 +48,7 @@
       $("#myForm").submit(function (event) {
         event.preventDefault();
 
+        $("#result").empty;
         let search = $("#search").val();
         let url =
           "https://api.unsplash.com/search/photos?query=" +
