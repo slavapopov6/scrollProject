@@ -28,7 +28,7 @@ function imageLoaded() {
 //   for (const key in attributes) {
 //     element.setAttribute(key, attribute[key]);
 //   }
-// }
+// }a
 
 // adding to the DOM
 function displayPhotos() {

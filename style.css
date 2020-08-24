@@ -45,3 +45,6 @@ h1 {
     margin: 10px;
   }
 }
+.container {
+  width: 20rem;
+}

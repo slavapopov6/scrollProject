@@ -4,12 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Infinite Scroll</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- title -->
     <h1>Unslpash API - Infinite Scroll</h1>
+    <div class="container">
+      <form id="myForm" autocomplete="off">
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="..."
+          />
+        </div>
+        <div class="form-group">
+          <button class="btn btn-danger btn-block">search</button>
+        </div>
+      </form>
+      <div id="result"></div>
+    </div>
+
+    <!-- title  -->
+
     <!-- loader -->
+
     <div class="loader" id="loader">
       <img src="./loader.svg" alt="" />
     </div>
@@ -19,5 +42,28 @@
     <!-- script -->
 
     <script src="./script.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $("#myForm").submit(function (event) {
+        event.preventDefault();
+
+        let search = $("#search").val();
+        let url =
+          "https://api.unsplash.com/search/photos?query=" +
+          search +
+          "&client_id=m6aPZ5dJ82VNd62MX98vq3bwk6x9lqVQJvQO-2HLnjw";
+        $.ajax({
+          method: "GET",
+          url: url,
+          success: function (data) {
+            console.log(data);
+            data.results.forEach((photo) => {
+              $("#result").append(`<img src="${photo.urls.regular}"/>`);
+            });
+          },
+        });
+      });
+    </script>
   </body>
 </html>
