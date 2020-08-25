@@ -74,22 +74,10 @@ h1 {
   width: 50%;
 }
 
-#result {
-  width: 100%;
-  margin-top: 5px;
-}
-
 /* media query */
 @media screen and (max-width: 600px) {
   h1 {
     font-size: 20px;
-  }
-  .image-container {
-    margin: 10px;
-  }
-
-  #result img {
-    margin: 10px;
   }
 
   .form-control {
@@ -102,10 +90,15 @@ h1 {
     width: 80%;
   }
 
-  #result img {
-    margin-left: 0px;
-    display: flex;
+  .image-container {
+    flex-flow: column;
+  }
+
+  .image-container a {
     width: 100%;
-    margin-top: 5px;
+  }
+  .image-container a img {
+    width: 100%;
+    margin: 10px 14px;
   }
 }

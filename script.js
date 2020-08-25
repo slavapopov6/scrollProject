@@ -128,7 +128,7 @@ function setRequestLabel(finished = false) {
   }
   if (requestsMade >= 50) pReqInfo.style.color = 'red';
   else pReqInfo.style.color = 'green';
-  pReqInfo.innerHTML = `There are ${totalPhotos} images found! <br/>You have made ${requestsMade} request since you opened the app`;
+  pReqInfo.innerHTML = `There are ${totalPhotos} images found! <br/> ${requestsMade} requests made since you opened the app`;
 }
 
 function toggleAccountSource() {
