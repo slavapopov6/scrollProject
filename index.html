@@ -11,60 +11,40 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Unslpash API - Infinite Scroll</h1>
+    <h1>Sikta ii Grasa - Hai si om tusi</h1>
     <div class="container">
-      <form id="myForm" autocomplete="off">
+      <form id="unUsedForm">
         <div class="form-group">
           <input
             type="text"
             class="form-control"
-            id="search"
-            placeholder="..."
+            id="inputSearch"
+            placeholder="Search image..."
+            required
           />
         </div>
         <div class="form-group">
-          <button class="btn btn-danger btn-block">search</button>
+          <button id="btnSearch" class="btn btn-danger btn-block">
+            Search
+          </button>
         </div>
       </form>
-      <div id="result"></div>
     </div>
-
-    <!-- title  -->
-
+    <div id="requestInfo">
+      <p id="pReqInfo">
+        You have made 5 request since you opened the app
+      </p>
+    </div>
     <!-- loader -->
-
-    <div class="loader" id="loader">
-      <img src="./loader.svg" alt="" />
+    <div class="loader" id="loader" style="display: none;">
+      <img src="./loader.svg" alt="loading" />
     </div>
+
     <!-- img container -->
-
     <div class="image-container" id="image-container"></div>
+
     <!-- script -->
-
     <script src="./script.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-      $("#myForm").submit(function (event) {
-        event.preventDefault();
-
-        $("#result").empty;
-        let search = $("#search").val();
-        let url =
-          "https://api.unsplash.com/search/photos?query=" +
-          search +
-          "&client_id=m6aPZ5dJ82VNd62MX98vq3bwk6x9lqVQJvQO-2HLnjw";
-        $.ajax({
-          method: "GET",
-          url: url,
-          success: function (data) {
-            console.log(data);
-            data.results.forEach((photo) => {
-              $("#result").append(`<img src="${photo.urls.regular}"/>`);
-            });
-          },
-        });
-      });
-    </script>
   </body>
 </html>
