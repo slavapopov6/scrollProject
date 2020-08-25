@@ -6,8 +6,12 @@ html {
 
 body {
   margin: 0;
-  font-family: Dosis, sans-serif;
+
   background: whitesmoke;
+}
+
+* {
+  font-family: Dosis, sans-serif;
 }
 
 h1 {
@@ -16,6 +20,37 @@ h1 {
   margin-bottom: 15px;
   font: size 40px;
   letter-spacing: 4px;
+}
+
+#srcInfo {
+  background-color: rgb(228, 222, 222);
+  width: 120px;
+  border-radius: 10px;
+  position: fixed;
+  top: 0;
+  font-weight: bold;
+  color: black;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0.2;
+  cursor: pointer;
+}
+#srcInfo:hover {
+  opacity: 1;
+}
+
+#srcInfo .body {
+  padding: 10px;
+  display: flex;
+}
+
+#srcInfo .body p {
+  margin: 0;
+  padding: 0;
+}
+
+#srcInfo .body #pSrcInfo {
+  margin-left: 10px;
+  color: green;
 }
 
 .loader {
@@ -100,5 +135,9 @@ h1 {
   .image-container a img {
     width: 100%;
     margin: 10px 14px;
+  }
+
+  #srcInfo {
+    top: 90%;
   }
 }

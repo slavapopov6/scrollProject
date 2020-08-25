@@ -5,6 +5,7 @@ const btnSearch = document.getElementById('btnSearch');
 const pReqInfo = document.getElementById('pReqInfo');
 const pPhotosFound = document.getElementById('pPhotosFound');
 const requestInfo = document.getElementById('requestInfo');
+const pSrcInfo = document.getElementById('pSrcInfo');
 
 let photosArray = [];
 let searchCriteria = '';
@@ -19,7 +20,7 @@ let apiKeys = {
 
 let apiKey;
 getWorkingKey();
-let count = 10;
+let count = 15;
 let page = 1;
 let totalPhotos = 0;
 let totalPages = 0;
@@ -61,7 +62,6 @@ async function randomPhotos() {
     const response = await fetch(url);
     data = await response.json();
     requestsMade++;
-    console.log(data);
     //setStats
     photosArray = data;
     requestInfo.style.display = 'none';
@@ -98,6 +98,7 @@ function displayPhotos() {
   });
 }
 let oneTime = 0;
+
 // scroll functionality
 window.addEventListener('scroll', () => {
   const canFetch =
@@ -109,7 +110,8 @@ window.addEventListener('scroll', () => {
     oneTime = 1;
     page++;
     apiURLS.Search = `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`;
-    searchPhotos();
+    if (searchable) searchPhotos();
+    else randomPhotos();
     setTimeout(() => {
       oneTime = 0;
     }, 1000);
@@ -169,9 +171,11 @@ function toggleAccountSource() {
   if (apiKey == apiKeys.Malii) {
     apiKey = apiKeys.Andrusika;
     apiURLS.Random = `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`;
+    pSrcInfo.innerHTML = 'Andrusika';
   } else {
     apiKey = apiKeys.Malii;
     apiURLS.Random = `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`;
+    pSrcInfo.innerHTML = 'Malii';
   }
 }
 
@@ -200,6 +204,7 @@ function getWorkingKey() {
         Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
         Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
       };
+      pSrcInfo.innerHTML = 'Malii';
     },
     () => {
       key = apiKeys.Andrusika;
@@ -212,6 +217,7 @@ function getWorkingKey() {
             Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
             Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
           };
+          pSrcInfo.innerHTML = 'Andrusika';
         },
         () => {
           apiKey = apiKey.Malii;
@@ -220,6 +226,7 @@ function getWorkingKey() {
             Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
             Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
           };
+          pSrcInfo.innerHTML = 'Malii';
         }
       );
     }
