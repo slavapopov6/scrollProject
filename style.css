@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Raleway:wght@500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Dosis&family=Raleway:wght@500&display=swap");
 
 html {
   box-sizing: border-box;
@@ -89,13 +89,19 @@ h1 {
   justify-content: space-between;
 }
 
-.image-container img {
-  max-width: 90%;
+.image-container a {
+  width: 510px;
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
   margin: 10px auto;
+  background-color: white;
 }
 
-.image-container a {
-  width: 50%;
+.image-container a img {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .form-control {
