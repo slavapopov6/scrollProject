@@ -42,7 +42,6 @@ h1 {
   width: 30%;
   text-align: center;
   font-weight: bold;
-  color: green;
   margin: 0 auto;
 }
 
@@ -97,6 +96,7 @@ h1 {
   .image-container a {
     width: 100%;
   }
+
   .image-container a img {
     width: 100%;
     margin: 10px 14px;

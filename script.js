@@ -3,26 +3,28 @@ const unUsedForm = document.getElementById('unUsedForm');
 const inputSearch = document.getElementById('inputSearch');
 const btnSearch = document.getElementById('btnSearch');
 const pReqInfo = document.getElementById('pReqInfo');
+const pPhotosFound = document.getElementById('pPhotosFound');
+const requestInfo = document.getElementById('requestInfo');
 
 let photosArray = [];
 let searchCriteria = '';
 let requestsMade = 0;
+let searchable = false;
 
 // api
 let apiKeys = {
   Malii: 'm6aPZ5dJ82VNd62MX98vq3bwk6x9lqVQJvQO-2HLnjw',
   Andrusika: 'nGrxUdbvYnMxMkS0E9sHru5TJz6QAVjCEA3z00W3MR0',
 };
-const apiKey = apiKeys.Malii;
+
+let apiKey;
+getWorkingKey();
 let count = 10;
 let page = 1;
 let totalPhotos = 0;
 let totalPages = 0;
 
-let apiURLS = {
-  Random: `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`,
-  Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
-};
+let apiURLS;
 
 // getPhotos from api
 async function searchPhotos() {
@@ -33,7 +35,7 @@ async function searchPhotos() {
     const response = await fetch(url);
     data = await response.json();
     requestsMade++;
-
+    requestInfo.style.display = 'block';
     //setStats
     totalPhotos = data.total;
     totalPages = data.total_pages;
@@ -43,11 +45,35 @@ async function searchPhotos() {
     setRequestLabel();
     closeLoader();
   } catch (error) {
+    closeLoader();
     console.log(error);
     setRequestLabel(true);
     toggleAccountSource();
+  }
+}
 
+// getPhotos random from api
+async function randomPhotos() {
+  if (searchCriteria) return;
+  let url = apiURLS.Random;
+  openLoader();
+  try {
+    const response = await fetch(url);
+    data = await response.json();
+    requestsMade++;
+    console.log(data);
+    //setStats
+    photosArray = data;
+    requestInfo.style.display = 'none';
+
+    displayPhotos();
+    setRequestLabel();
     closeLoader();
+  } catch (error) {
+    closeLoader();
+    console.log(error);
+    setRequestLabel(true);
+    toggleAccountSource();
   }
 }
 
@@ -71,18 +97,22 @@ function displayPhotos() {
     imageContainer.appendChild(item);
   });
 }
-
+let oneTime = 0;
 // scroll functionality
 window.addEventListener('scroll', () => {
   const canFetch =
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 2000 &&
     photosArray.length !== 0 &&
     page != totalPages;
 
-  if (canFetch) {
+  if (canFetch && oneTime == 0) {
+    oneTime = 1;
     page++;
     apiURLS.Search = `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`;
     searchPhotos();
+    setTimeout(() => {
+      oneTime = 0;
+    }, 1000);
   }
 });
 
@@ -90,12 +120,14 @@ window.addEventListener('scroll', () => {
 btnSearch.addEventListener('click', () => {
   resetStats();
   photosArray = [];
-  searchPhotos();
+  if (searchable) searchPhotos();
+  else randomPhotos();
 });
 
-inputSearch.addEventListener('change', function () {
+inputSearch.addEventListener('input', function () {
   searchCriteria = this.value;
   apiURLS.Search = `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`;
+  setBtnLabel();
 });
 
 //Nu ne trebuie formu doar sa scot hneaua asta
@@ -121,18 +153,75 @@ function resetStats() {
 
 function setRequestLabel(finished = false) {
   if (finished) {
-    pReqInfo.innerHTML = `Probably no more requests left((, but try again!)) )`;
+    pReqInfo.innerHTML = `Probably no more requests left but try again!)) )`;
     alert(
       "Probably no more requests left((, But try i again i've done something"
     );
+  } else {
+    if (requestsMade >= 50) pReqInfo.style.color = 'red';
+    else pReqInfo.style.color = 'green';
+    pReqInfo.innerHTML = `${requestsMade} requests made since you opened the app`;
+    pPhotosFound.innerHTML = `There are ${totalPhotos} images found! <br/>`;
   }
-  if (requestsMade >= 50) pReqInfo.style.color = 'red';
-  else pReqInfo.style.color = 'green';
-  pReqInfo.innerHTML = `There are ${totalPhotos} images found! <br/> ${requestsMade} requests made since you opened the app`;
 }
 
 function toggleAccountSource() {
-  if (apiKey == apiKeys.Malii) apiKeys = apiKeys.Andrusika;
-  else apiKeys = apiKeys.Malii;
+  if (apiKey == apiKeys.Malii) {
+    apiKey = apiKeys.Andrusika;
+    apiURLS.Random = `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`;
+  } else {
+    apiKey = apiKeys.Malii;
+    apiURLS.Random = `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`;
+  }
 }
+
+function setBtnLabel() {
+  if (searchCriteria) {
+    searchable = true;
+    btnSearch.innerHTML = 'Search';
+  } else {
+    searchable = false;
+    btnSearch.innerHTML = 'Get Random Photos';
+  }
+}
+
+setBtnLabel();
 setRequestLabel();
+
+function getWorkingKey() {
+  let key = apiKeys.Malii;
+  let url = `https://api.unsplash.com/photos/random?client_id=${key}`;
+
+  fetch(url).then(
+    () => {
+      apiKey = key;
+      apiURLS = {};
+      apiURLS = {
+        Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
+        Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
+      };
+    },
+    () => {
+      key = apiKeys.Andrusika;
+      url = `https://api.unsplash.com/photos/random?client_id=${key}`;
+      fetch(url).then(
+        () => {
+          apiKey = key;
+          apiURLS = {};
+          apiURLS = {
+            Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
+            Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
+          };
+        },
+        () => {
+          apiKey = apiKey.Malii;
+          apiURLS = {};
+          apiURLS = {
+            Random: `https://api.unsplash.com/photos/random?count=${count}&client_id=${apiKey}`,
+            Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
+          };
+        }
+      );
+    }
+  );
+}
