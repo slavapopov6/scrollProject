@@ -1,80 +1,138 @@
-const imageContainer = document.getElementById("image-container");
-const loader = document.getElementById("loader");
+const imageContainer = document.getElementById('image-container');
+const unUsedForm = document.getElementById('unUsedForm');
+const inputSearch = document.getElementById('inputSearch');
+const btnSearch = document.getElementById('btnSearch');
+const pReqInfo = document.getElementById('pReqInfo');
 
-let ready = false;
-let imagesLoaded = 0;
-let totalImages = 0;
 let photosArray = [];
-initialLoad = true;
+let searchCriteria = '';
+let requestsMade = 0;
 
 // api
-let count = 5;
-const apiKey = "m6aPZ5dJ82VNd62MX98vq3bwk6x9lqVQJvQO-2HLnjw";
-let apiURL = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`;
+let apiKeys = {
+  Malii: 'm6aPZ5dJ82VNd62MX98vq3bwk6x9lqVQJvQO-2HLnjw',
+  Andrusika: 'nGrxUdbvYnMxMkS0E9sHru5TJz6QAVjCEA3z00W3MR0',
+};
+const apiKey = apiKeys.Malii;
+let count = 10;
+let page = 1;
+let totalPhotos = 0;
+let totalPages = 0;
 
-// check if images were loaded
-function imageLoaded() {
-  imagesLoaded++;
-  if (imagesLoaded === totalImages) {
-    ready = true;
-    loader.hidden = true;
-    initialLoad = false;
-    count = 30;
+let apiURLS = {
+  Random: `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`,
+  Search: `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`,
+};
+
+// getPhotos from api
+async function searchPhotos() {
+  if (!searchCriteria) return;
+  let url = apiURLS.Search;
+  openLoader();
+  try {
+    const response = await fetch(url);
+    data = await response.json();
+    requestsMade++;
+
+    //setStats
+    totalPhotos = data.total;
+    totalPages = data.total_pages;
+    photosArray = data.results;
+
+    displayPhotos();
+    setRequestLabel();
+    closeLoader();
+  } catch (error) {
+    console.log(error);
+    setRequestLabel(true);
+    toggleAccountSource();
+
+    closeLoader();
   }
 }
 
-// helper function
-// function setAttributes(element, attribute) {
-//   for (const key in attributes) {
-//     element.setAttribute(key, attribute[key]);
-//   }
-// }a
-
 // adding to the DOM
 function displayPhotos() {
-  imagesLoaded = 0;
-  totalImages = photosArray.length;
-  photosArray.forEach((photo) => {
-    const item = document.createElement("a");
-    item.setAttribute("href", photo.links.html);
-    item.setAttribute("target", "_blank");
-    // setAttributes(item, {
-    //   href: photo.links.html,
-    //   target: "_blank",
-    // });
-    // create img
-    const img = document.createElement("img");
+  if (photosArray.length == 0) return;
 
-    // setAttributes(img, {
-    //   src: photo.urls.regular,
-    // });
-    img.setAttribute("src", photo.urls.regular);
+  photosArray.forEach((photo) => {
+    const item = document.createElement('a');
+    item.setAttribute('href', photo.links.html);
+    item.setAttribute('target', '_blank');
+
+    // create img
+    const img = document.createElement('img');
+
+    img.setAttribute('src', photo.urls.regular);
+
     //put img inside <a>
-    img.addEventListener("load", imageLoaded);
+    // img.addEventListener('load');
     item.appendChild(img);
     imageContainer.appendChild(item);
   });
 }
-// loading is finished
 
-// getPhotos from api
-async function getPhotos() {
-  try {
-    const response = await fetch(apiURL);
-    photosArray = await response.json();
-    displayPhotos();
-  } catch (error) {}
-}
 // scroll functionality
-window.addEventListener("scroll", () => {
-  if (
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 &&
-    ready
-  ) {
-    ready = false;
-    getPhotos();
+window.addEventListener('scroll', () => {
+  const canFetch =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+    photosArray.length !== 0 &&
+    page != totalPages;
+
+  if (canFetch) {
+    page++;
+    apiURLS.Search = `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`;
+    searchPhotos();
   }
 });
 
-// on load
-getPhotos();
+//searches on click
+btnSearch.addEventListener('click', () => {
+  resetStats();
+  photosArray = [];
+  searchPhotos();
+});
+
+inputSearch.addEventListener('change', function () {
+  searchCriteria = this.value;
+  apiURLS.Search = `https://api.unsplash.com/search/photos?page=${page}&query=${searchCriteria}&client_id=${apiKey}`;
+});
+
+//Nu ne trebuie formu doar sa scot hneaua asta
+unUsedForm.addEventListener('submit', (e) => e.preventDefault());
+
+//if invisible set visible, else visible
+function openLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'block';
+}
+
+function closeLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'none';
+}
+
+function resetStats() {
+  page = 1;
+  totalPages = 0;
+  totalPages = 0;
+  imageContainer.innerHTML = '';
+}
+
+function setRequestLabel(finished = false) {
+  if (finished) {
+    pReqInfo.innerHTML = `Probably no more requests left((, but try again!)) )`;
+    alert(
+      "Probably no more requests left((, But try i again i've done something"
+    );
+  }
+  if (requestsMade >= 50) pReqInfo.style.color = 'red';
+  else pReqInfo.style.color = 'green';
+  pReqInfo.innerHTML = `There are ${totalPhotos} images found! <br/>You have made ${requestsMade} request since you opened the app`;
+}
+
+function toggleAccountSource() {
+  if (apiKey == apiKeys.Malii) apiKeys = apiKeys.Andrusika;
+  else apiKeys = apiKeys.Malii;
+}
+setRequestLabel();
