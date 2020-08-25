@@ -24,7 +24,7 @@ h1 {
 
 #srcInfo {
   background-color: rgb(228, 222, 222);
-  width: 120px;
+  width: auto;
   border-radius: 10px;
   position: fixed;
   top: 0;
